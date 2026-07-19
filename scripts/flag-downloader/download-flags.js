@@ -12,14 +12,26 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // fileURLToPath decodes spaces and non-ASCII characters in copied folder names.
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(ROOT, '..', '..');
 const args = new Set(process.argv.slice(2));
-const csvPath = path.resolve(process.cwd(), process.argv[2]?.startsWith('--') ? 'countries.csv' : process.argv[2] || 'countries.csv');
-const outputDir = path.resolve(process.cwd(), 'flags');
 const mappingPath = path.join(ROOT, 'flags.json');
 const codesPath = path.join(ROOT, 'country-codes.json');
+const defaultCsvPath = path.join(ROOT, 'countries.csv');
 const RETRIES = 8;
 const MAX_RETRY_DELAY_MS = 30000;
 const USER_AGENT = 'flag-card-game-downloader/1.0 (Wikimedia Commons flag asset downloader)';
+
+export function resolveOutputDir() {
+  return path.resolve(REPO_ROOT, 'flags');
+}
+
+function resolveCsvPath(input) {
+  if (!input || input.startsWith('--')) return defaultCsvPath;
+  return path.isAbsolute(input) ? input : path.resolve(process.cwd(), input);
+}
+
+const csvPath = resolveCsvPath(process.argv[2]);
+const outputDir = resolveOutputDir();
 
 if (args.has('--help') || args.has('-h')) {
   console.log('Usage: node download-flags.js [countries.csv] [--verify]');
