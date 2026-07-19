@@ -1,0 +1,12 @@
+{
+  "name": "flag-card-game-assets",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "download": "node download-flags.js",
+    "verify": "node download-flags.js --verify"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
